@@ -1,0 +1,45 @@
+# CI: testes + build/scan da imagem em todo PR e push.
+# CD: na main, publica a imagem (sha-xxxxxxx) no ACR e promove em dev via GitOps (commit no platform-gitops).
+#     O Flux aplica no AKS; este pipeline nunca acessa o cluster.
+name: service
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  test:
+    uses: ViniciusOtoni/platform-cicd-workflows/.github/workflows/ci-python.yml@v1
+    with:
+      install-command: pip install -e ".[dev]"
+      build: false
+
+  image:
+    needs: test
+    uses: ViniciusOtoni/platform-cicd-workflows/.github/workflows/ci-container.yml@v1
+    with:
+      image-name: pedidos/pedidos-api
+      push: ${{ github.event_name == 'push' }}
+      environment-name: dev
+      acr-name: ${{ vars.ACR_NAME }}
+      azure-client-id: ${{ vars.AZURE_CLIENT_ID }}
+      azure-tenant-id: ${{ vars.AZURE_TENANT_ID }}
+      azure-subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+  promote-dev:
+    needs: image
+    if: github.event_name == 'push'
+    uses: ViniciusOtoni/platform-cicd-workflows/.github/workflows/cd-gitops-promote.yml@v1
+    with:
+      file-path: domains/pedidos/overlays/dev/kustomization.yaml
+      yq-expression: (.images[] | select(.name == "pedidos-api")).newTag = strenv(TAG)
+      tag: ${{ needs.image.outputs.image-tag }}
+      environment-name: dev
+      mode: commit
+    secrets:
+      GITOPS_DEPLOY_KEY: ${{ secrets.GITOPS_DEPLOY_KEY }}

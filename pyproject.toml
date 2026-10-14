@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pedidos-service"
+version = "0.1.0"
+description = "Bounded Context Pedidos: API transacional (FastAPI) que publica eventos de integração via Transactional Outbox."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.32,<1",
+  "pydantic-settings>=2.6,<3",
+  "sqlalchemy>=2.0,<3",
+  "alembic>=1.14,<2",
+  "psycopg[binary]>=3.2,<4",
+  "azure-identity>=1.19,<2",
+  # SDK da plataforma (ADR-0002/0003), versão fixada via GitHub Release.
+  "edp-events[eventhubs] @ https://github.com/ViniciusOtoni/platform-event-sdk/releases/download/v0.1.0/edp_events-0.1.0-py3-none-any.whl",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.8", "httpx>=0.27"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pedidos"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

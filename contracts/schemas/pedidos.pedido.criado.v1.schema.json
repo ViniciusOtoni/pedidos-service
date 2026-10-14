@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:schema:pedidos.pedido.criado.v1",
+  "title": "PedidoCriado",
+  "description": "Gerado a partir de pedidos.pedido.v1.odcs.yaml (schema: pedido_criado). Não editar manualmente.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["pedido_id", "aggregate_version", "cliente_id", "itens", "valor_total", "moeda", "criado_em"],
+  "properties": {
+    "pedido_id": { "type": "string", "format": "uuid" },
+    "aggregate_version": { "type": "integer", "minimum": 1 },
+    "cliente_id": { "type": "string" },
+    "itens": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["sku", "quantidade", "preco_unitario"],
+        "properties": {
+          "sku": { "type": "string" },
+          "quantidade": { "type": "integer", "minimum": 1 },
+          "preco_unitario": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "valor_total": { "type": "number", "exclusiveMinimum": 0 },
+    "moeda": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "criado_em": { "type": "string", "format": "date-time" }
+  }
+}

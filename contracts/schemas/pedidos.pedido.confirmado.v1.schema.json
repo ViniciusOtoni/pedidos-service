@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:schema:pedidos.pedido.confirmado.v1",
+  "title": "PedidoConfirmado",
+  "description": "Gerado a partir de pedidos.pedido.v1.odcs.yaml (schema: pedido_confirmado). Não editar manualmente.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["pedido_id", "aggregate_version", "status", "confirmado_em"],
+  "properties": {
+    "pedido_id": { "type": "string", "format": "uuid" },
+    "aggregate_version": { "type": "integer", "minimum": 2 },
+    "status": { "const": "CONFIRMADO" },
+    "confirmado_em": { "type": "string", "format": "date-time" }
+  }
+}

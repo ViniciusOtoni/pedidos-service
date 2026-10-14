@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:schema:pedidos.pedido.cancelado.v1",
+  "title": "PedidoCancelado",
+  "description": "Gerado a partir de pedidos.pedido.v1.odcs.yaml (schema: pedido_cancelado). Não editar manualmente.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["pedido_id", "aggregate_version", "motivo", "cancelado_por", "cancelado_em"],
+  "properties": {
+    "pedido_id": { "type": "string", "format": "uuid" },
+    "aggregate_version": { "type": "integer", "minimum": 2 },
+    "motivo": { "enum": ["CLIENTE_DESISTIU", "PAGAMENTO_RECUSADO", "FRAUDE"] },
+    "cancelado_por": { "enum": ["CLIENTE", "SISTEMA"] },
+    "cancelado_em": { "type": "string", "format": "date-time" }
+  }
+}
