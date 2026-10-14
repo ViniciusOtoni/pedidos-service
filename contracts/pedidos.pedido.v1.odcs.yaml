@@ -1,11 +1,10 @@
-# Contrato ODCS v3 do stream de eventos do agregado Pedido (Published Language do BC Pedidos).
-# Fonte única (ADR-0005). Até a Fase 3, os JSON Schemas em contracts/schemas/ são mantidos à mão;
-# depois serão gerados por platform-contracts-tooling e validados no CI.
-apiVersion: v3.0.2
+# Contrato ODCS v3.2.0 do stream de eventos do agregado Pedido (Published Language do BC Pedidos).
+# Fonte única (ADR-0005): os JSON Schemas em contracts/schemas/ são GERADOS por `edp-contracts generate`.
+apiVersion: v3.2.0
 kind: DataContract
 id: urn:datacontract:pedidos:pedido:v1
 name: Eventos do agregado Pedido
-version: 1.0.0
+version: 1.1.0
 status: active
 domain: pedidos
 dataProduct: pedidos-eventos
@@ -20,6 +19,7 @@ description:
 
 schema:
   - name: pedido_criado
+    businessName: PedidoCriado
     physicalName: pedidos.pedido.criado.v1
     logicalType: object
     physicalType: event
@@ -27,12 +27,16 @@ schema:
     properties:
       - name: pedido_id
         logicalType: string
+        logicalTypeOptions:
+          format: uuid
         required: true
         primaryKey: true
         primaryKeyPosition: 1
         description: Identidade do agregado (UUID). Chave de partição no Event Hubs.
       - name: aggregate_version
         logicalType: integer
+        logicalTypeOptions:
+          minimum: 1
         required: true
         description: Versão do agregado após este evento (começa em 1).
       - name: cliente_id
@@ -42,6 +46,8 @@ schema:
       - name: itens
         logicalType: array
         required: true
+        logicalTypeOptions:
+          minItems: 1
         items:
           name: item
           logicalType: object
@@ -51,12 +57,18 @@ schema:
               required: true
             - name: quantidade
               logicalType: integer
+              logicalTypeOptions:
+                minimum: 1
               required: true
             - name: preco_unitario
               logicalType: number
+              logicalTypeOptions:
+                minimum: 0
               required: true
       - name: valor_total
         logicalType: number
+        logicalTypeOptions:
+          exclusiveMinimum: 0
         required: true
         quality:
           - type: sql
@@ -65,13 +77,16 @@ schema:
             mustBe: 0
       - name: moeda
         logicalType: string
+        logicalTypeOptions:
+          pattern: "^[A-Z]{3}$"
         required: true
+        description: ISO 4217.
       - name: criado_em
-        logicalType: date
-        physicalType: timestamp
+        logicalType: timestamp
         required: true
 
   - name: pedido_confirmado
+    businessName: PedidoConfirmado
     physicalName: pedidos.pedido.confirmado.v1
     logicalType: object
     physicalType: event
@@ -79,20 +94,27 @@ schema:
     properties:
       - name: pedido_id
         logicalType: string
+        logicalTypeOptions:
+          format: uuid
         required: true
         primaryKey: true
+        primaryKeyPosition: 1
       - name: aggregate_version
         logicalType: integer
+        logicalTypeOptions:
+          minimum: 2
         required: true
       - name: status
         logicalType: string
         required: true
+        enum:
+          - value: CONFIRMADO
       - name: confirmado_em
-        logicalType: date
-        physicalType: timestamp
+        logicalType: timestamp
         required: true
 
   - name: pedido_cancelado
+    businessName: PedidoCancelado
     physicalName: pedidos.pedido.cancelado.v1
     logicalType: object
     physicalType: event
@@ -100,22 +122,31 @@ schema:
     properties:
       - name: pedido_id
         logicalType: string
+        logicalTypeOptions:
+          format: uuid
         required: true
         primaryKey: true
+        primaryKeyPosition: 1
       - name: aggregate_version
         logicalType: integer
+        logicalTypeOptions:
+          minimum: 2
         required: true
       - name: motivo
         logicalType: string
         required: true
-        description: "CLIENTE_DESISTIU | PAGAMENTO_RECUSADO | FRAUDE"
+        enum:
+          - value: CLIENTE_DESISTIU
+          - value: PAGAMENTO_RECUSADO
+          - value: FRAUDE
       - name: cancelado_por
         logicalType: string
         required: true
-        description: "CLIENTE | SISTEMA"
+        enum:
+          - value: CLIENTE
+          - value: SISTEMA
       - name: cancelado_em
-        logicalType: date
-        physicalType: timestamp
+        logicalType: timestamp
         required: true
 
 slaProperties:
@@ -124,8 +155,10 @@ slaProperties:
     unit: m
 
 team:
-  - username: ViniciusOtoni
-    role: owner
+  name: pedidos
+  members:
+    - username: ViniciusOtoni
+      role: owner
 
 customProperties:
   - property: eventHub

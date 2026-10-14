@@ -2,29 +2,70 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:schema:pedidos.pedido.criado.v1",
   "title": "PedidoCriado",
-  "description": "Gerado a partir de pedidos.pedido.v1.odcs.yaml (schema: pedido_criado). Não editar manualmente.",
+  "description": "Gerado por edp-contracts a partir de urn:datacontract:pedidos:pedido:v1 v1.1.0 (objeto pedido_criado). Não editar manualmente.",
   "type": "object",
   "additionalProperties": true,
-  "required": ["pedido_id", "aggregate_version", "cliente_id", "itens", "valor_total", "moeda", "criado_em"],
   "properties": {
-    "pedido_id": { "type": "string", "format": "uuid" },
-    "aggregate_version": { "type": "integer", "minimum": 1 },
-    "cliente_id": { "type": "string" },
+    "pedido_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Identidade do agregado (UUID). Chave de partição no Event Hubs."
+    },
+    "aggregate_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Versão do agregado após este evento (começa em 1)."
+    },
+    "cliente_id": {
+      "type": "string"
+    },
     "itens": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["sku", "quantidade", "preco_unitario"],
+        "additionalProperties": true,
         "properties": {
-          "sku": { "type": "string" },
-          "quantidade": { "type": "integer", "minimum": 1 },
-          "preco_unitario": { "type": "number", "minimum": 0 }
-        }
-      }
+          "sku": {
+            "type": "string"
+          },
+          "quantidade": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "preco_unitario": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "sku",
+          "quantidade",
+          "preco_unitario"
+        ]
+      },
+      "minItems": 1
     },
-    "valor_total": { "type": "number", "exclusiveMinimum": 0 },
-    "moeda": { "type": "string", "pattern": "^[A-Z]{3}$" },
-    "criado_em": { "type": "string", "format": "date-time" }
-  }
+    "valor_total": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "moeda": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217."
+    },
+    "criado_em": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "pedido_id",
+    "aggregate_version",
+    "cliente_id",
+    "itens",
+    "valor_total",
+    "moeda",
+    "criado_em"
+  ]
 }
