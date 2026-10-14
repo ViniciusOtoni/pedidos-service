@@ -22,6 +22,15 @@ def main() -> None:
         raise RuntimeError("EVENTHUB_NAMESPACE_FQDN é obrigatório para o relay")
 
     from edp_events.publishers.eventhubs import EventHubsPublisher
+    from edp_events.registry import register_schemas
+
+    log = logging.getLogger("pedidos.relay")
+    if settings.register_schemas:
+        # Registry efêmero (ADR-0010): o produtor registra a Published Language ao subir.
+        try:
+            register_schemas(settings.contracts_dir, settings.eventhub_namespace_fqdn, settings.schema_group)
+        except Exception:  # noqa: BLE001 - registry indisponível não deve impedir a publicação
+            log.exception("Falha ao registrar schemas no Schema Registry")
 
     stop = False
 

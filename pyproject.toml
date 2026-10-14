@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pedidos-service"
-version = "0.1.0"
+version = "0.2.0"
 description = "Bounded Context Pedidos: API transacional (FastAPI) que publica eventos de integração via Transactional Outbox."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -17,7 +17,7 @@ dependencies = [
   "psycopg[binary]>=3.2,<4",
   "azure-identity>=1.19,<2",
   # SDK da plataforma (ADR-0002/0003), versão fixada via GitHub Release.
-  "edp-events[eventhubs] @ https://github.com/ViniciusOtoni/platform-event-sdk/releases/download/v0.1.0/edp_events-0.1.0-py3-none-any.whl",
+  "edp-events[eventhubs] @ https://github.com/ViniciusOtoni/platform-event-sdk/releases/download/v0.2.0/edp_events-0.2.0-py3-none-any.whl",
 ]
 
 [project.optional-dependencies]

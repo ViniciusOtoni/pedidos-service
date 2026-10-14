@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     event_source: str = "/dominios/pedidos/pedidos-api"
     contracts_dir: Path = _DEFAULT_CONTRACTS
     eventhub_namespace_fqdn: str | None = None
+    schema_group: str = "pedidos"  # schema group do domínio no Azure Schema Registry
+    register_schemas: bool = True
     relay_batch_size: int = 100
     relay_poll_interval_seconds: float = 1.0
 
