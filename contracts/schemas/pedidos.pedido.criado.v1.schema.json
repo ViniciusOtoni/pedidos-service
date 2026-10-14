@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:schema:pedidos.pedido.criado.v1",
   "title": "PedidoCriado",
-  "description": "Gerado por edp-contracts a partir de urn:datacontract:pedidos:pedido:v1 v1.1.0 (objeto pedido_criado). Não editar manualmente.",
+  "description": "Gerado por edp-contracts a partir de urn:datacontract:pedidos:pedido:v1 v1.2.0 (objeto pedido_criado). Não editar manualmente.",
   "type": "object",
   "additionalProperties": true,
   "properties": {
@@ -49,11 +49,6 @@
       "type": "number",
       "exclusiveMinimum": 0
     },
-    "moeda": {
-      "type": "string",
-      "pattern": "^[A-Z]{3}$",
-      "description": "ISO 4217."
-    },
     "criado_em": {
       "type": "string",
       "format": "date-time"
@@ -65,7 +60,6 @@
     "cliente_id",
     "itens",
     "valor_total",
-    "moeda",
     "criado_em"
   ]
 }
