@@ -1,4 +1,4 @@
-# CI: testes + build/scan da imagem em todo PR e push.
+# CI: contratos (lint ODCS + schemas gerados + breaking changes) + testes + build/scan da imagem.
 # CD: na main, publica a imagem (sha-xxxxxxx) no ACR e promove em dev via GitOps (commit no platform-gitops).
 #     O Flux aplica no AKS; este pipeline nunca acessa o cluster.
 name: service
@@ -13,6 +13,9 @@ permissions:
   id-token: write
 
 jobs:
+  contracts:
+    uses: ViniciusOtoni/platform-cicd-workflows/.github/workflows/ci-contracts.yml@v1
+
   test:
     uses: ViniciusOtoni/platform-cicd-workflows/.github/workflows/ci-python.yml@v1
     with:
@@ -20,7 +23,7 @@ jobs:
       build: false
 
   image:
-    needs: test
+    needs: [contracts, test]
     uses: ViniciusOtoni/platform-cicd-workflows/.github/workflows/ci-container.yml@v1
     with:
       image-name: pedidos/pedidos-api

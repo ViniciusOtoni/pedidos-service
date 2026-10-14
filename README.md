@@ -15,7 +15,7 @@ src/pedidos/
   migrations/      # Alembic
 contracts/
   pedidos.pedido.v1.odcs.yaml          # contrato ODCS (fonte única, ADR-0005)
-  schemas/*.schema.json                # JSON Schema por tipo de evento
+  schemas/*.schema.json                # GERADOS: edp-contracts generate contracts/pedidos.pedido.v1.odcs.yaml --out contracts/schemas
 ```
 
 | Evento de integração | Quando | Versão do agregado |
@@ -70,7 +70,7 @@ Pipeline `.github/workflows/service.yml`, que usa o [`platform-cicd-workflows@v1
 
 | Evento | O que roda |
 |---|---|
-| PR | `ci-python` (ruff + pytest) + `ci-container` (build + Trivy) |
+| PR | `ci-contracts` (lint ODCS v3.2.0, schemas gerados em dia, **bloqueio de breaking changes**) + `ci-python` (ruff + pytest) + `ci-container` (build + Trivy) |
 | Merge na `main` | Push `sha-xxxxxxx` no ACR + `cd-gitops-promote`, que faz commit no `platform-gitops`; o Flux então aplica no AKS |
 
 ## ADRs relacionados
